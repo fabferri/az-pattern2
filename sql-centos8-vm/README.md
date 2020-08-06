@@ -117,7 +117,7 @@ Add **/opt/mssql-tools/bin/** to your **PATH** environment variable. Run the fol
 [root@h1 ~]# echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 [root@h1 ~]# source ~/.bashrc
 ```
-use sqlcmd to locally connect to your new SQL Server instance"
+Use sqlcmd to locally connect to your new SQL Server instance:
 ```bash
 [root@h1 ~]# sqlcmd -S localhost -U SA -P '<YourPassword>'
 ```

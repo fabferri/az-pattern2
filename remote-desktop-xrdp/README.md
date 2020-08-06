@@ -20,9 +20,8 @@ editor=""/>
 ## How to configure Remote Desktop to connect to a CentOS 8 Azure VM 
 When a CentOS-based is created from Azure marketplace, the VM image bootstraps with minimal installation and does not have a desktop environment installed. Azure Linux VMs are commonly managed using SSH connections rather than a desktop environment. The post walks you through the steps to activate the remote desktop to the CentOS Azure VM.
 
-There are few Remote Desktop Protocol (RDP) servers to connect to with remote desktop to linux host/VM.
-* xrdp is a free and open-source RDP server which allows you to establish remote desktop sessions to Linux server from Windows or Linux host.
-* [freeRDP](https://www.freerdp.com/) 
+xrdp is a free and open-source RDP server which allows you to establish remote desktop sessions to Linux server from Windows or Linux host.
+
 
 In this post we use xrdp server installed in CentOS 8.2 Azure VM:
 
@@ -186,12 +185,47 @@ firewall-cmd --add-port=3389/tcp --permanent
 firewall-cmd –reload
 ```
 
-### NOTE **xrdp cannot accept SSH keys for authentication**
+### NOTE 1 **xrdp cannot accept SSH keys for authentication**
 * If you created the Azure CentOS VM to login with  username and password, you _do not need_ to create a new username to the access to the VM.
 * If you created the Azure CentOS VM only use SSH key authentication and do not have a local account password you need to create a new account with username and password to connect in RDP.
 ```bash
 [root@h1 ~]# useradd user1xrdp
 [root@h1 ~]# passwd user1xrdp
+```
+
+### NOTE 2
+xrdp log files are stored in 
+xRDP writes some log files into:
+- **/var/log/xrdp.log** 
+- **/var/log/xrdp-sesman.log**
+
+if you have some issues, these logs files might provide useful insight about the problem you are encountering.
+
+### NOTE 3 how to switch the display from Wayland to X11
+CentOS 8 uses **Wayland** as the default GNOME display server rather than the legacy X.Org server.
+One way to determine if you’re running in Wayland, is to check the value of the variable $WAYLAND_DISPLAY, by command **echo $WAYLAND_DISPLAY**
+If you are not running under Wayland the variable will not contain any values.
+
+To run GNOME in X11:
+1. Open **/etc/gdm/custom.conf** 
+2. uncomment the line **WaylandEnable=false**
+3. Add the following line to the [daemon] section:
+   ```
+   DefaultSession=gnome-xorg.desktop
+   ```
+4. Save the **custom.conf** file
+
+You can also use loginctl to show you what type of session is running:
+```bash
+[pathlabuser@h1 ~]$ loginctl
+SESSION  UID USER        SEAT TTY
+      1 1000 pathlabuser         
+     c1 1000 pathlabuser         
+
+2 sessions listed.
+
+[pathlabuser@h1 ~]$ loginctl show-session c1 -p Type
+Type=x11
 ```
 
 ## <a name="AzureDeployment"></a>3. Add a rule to the NSG to allow inbound connection on RDP port

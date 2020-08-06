@@ -201,12 +201,15 @@ When you deploy an Azure VM through Azure management portal, a Network Security 
 
 ## <a name="AzureDeployment"></a>4. Connect to the VM via RDP
 Connect to the VM via RDP
+
 [![3]][3]
 
 Inside the RDP session, the xrdp server asks for username and password to access to the CentOS VM:
+
 [![4]][4]
 
-the Gnome desktop is available inside the RDP session:
+Gnome desktop is available inside the RDP session:
+
 [![5]][5]
 
 ## <a name="AzureDeployment"></a>5. Install Visual Studio code in Azure CentOS VM
@@ -224,7 +227,7 @@ enabled=1
 gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 ```
-it can be achieved by command:
+it can be achieved easisly by tee command:
 ```bash
 [root@h1 ~]# tee /etc/yum.repos.d/vscode.repo <<ENDOFCONTENT
 [code]
@@ -235,6 +238,7 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 ENDOFCONTENT
 ```
+
 ### <a name="AzureDeployment"></a>5.3 Install Visual Studio Code on Azure CentOS 8 
 ```bash
 [root@h1 ~]# dnf install code

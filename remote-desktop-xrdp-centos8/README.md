@@ -202,13 +202,13 @@ xRDP writes some log files into:
 if you have some issues, these logs files might provide useful insight about the problem you are encountering.
 
 ### NOTE 3 how to switch the display from Wayland to X11
-CentOS 8 uses **Wayland** as the default GNOME display server rather than the legacy X.Org server.
+ The default Desktop Environment (DE) on CentOS 8 is GNOME which is configured to use **Wayland** display manager by default. However, Wayland isn’t a remote rendering API like X.org.
 One way to determine if you’re running in Wayland, is to check the value of the variable $WAYLAND_DISPLAY, by command **echo $WAYLAND_DISPLAY**
 If you are not running under Wayland the variable will not contain any values.
 
-To run GNOME in X11:
+To run GNOME in X11, edit GNOME display manager (GDM):
 1. Open **/etc/gdm/custom.conf** 
-2. uncomment the line **WaylandEnable=false**
+2. to use the Xorg display manager, uncomment the line **WaylandEnable=false**
 3. Add the following line to the [daemon] section:
    ```
    DefaultSession=gnome-xorg.desktop

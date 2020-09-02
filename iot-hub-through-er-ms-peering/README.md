@@ -18,21 +18,19 @@ editor=""/>
    ms.author="fabferri" />
 
 # Azure IoT Hub with transit through ExpressRoute Microsoft peering 
-This article describes how to deploy an Azure IoT Hub through ARM template, and how an IoT client in dotnet core sends messages to the IoT Hub through ExpressRoute Microsoft peering. 
-To verify messages/events between IoT client and Azure IoT Hub pass through the ExpressRoute Microsoft peering, a traffic capture is collected in the customer edge router connected to the ExpressRoute circuit. 
+This article describes how to deploy an Azure IoT Hub, and how an IoT client in dotnet core in on-premises network can sends messages to the IoT Hub through ExpressRoute Microsoft peering. 
+To verify messages between IoT client and Azure IoT Hub pass through the ExpressRoute Microsoft peering, a traffic capture is executed in the customer edge router connected to the ExpressRoute circuit. 
 
-The following diagram shows the configuration.
+The following network diagram shows the configuration.
 
 [![1]][1]
 
 
 ## <a name="EnableIPForwarding"></a>1. Description of ARM template to deploy the IoT Hub
-The ARM template **az-iotHub.json**:
+The IoT hub is created by the ARM template **az-iotHub.json**. The ARM template make the following actions:
 * create an Azure Storage account
 * create an IoT Hub with auto-route messages to storage account when the body message contains level="storage"
 * define the fallback route for sending the messages that don't satisfy any of the existing routes to the built-in-Event Hubs
-
-
 
 An IoT Hub has a default built-in-endpoint (messages/events) with Event Hubs. This endpoint is currently only exposed using the AMQP protocol on port 5671.
 

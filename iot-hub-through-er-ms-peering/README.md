@@ -177,7 +177,7 @@ $connString=Get-AzIotHubDeviceConnectionString -ResourceGroupName $rgName -IotHu
 The folder **iot-device** contains the IoT client files.
 
 ### <a name="Manual registration IoT device"></a>3.a Build and run the IoT client with Microsoft Visual Studio Code
-Open Visual Studio Code and in the folder **iot-client** edit the file **appsettings.json**. The file has the following structure:
+Open Visual Studio Code and  edit the file **appsettings.json** stored in the folder **iot-client**. The file has the following structure:
 
 ```json
 {
@@ -191,7 +191,9 @@ Open Visual Studio Code and in the folder **iot-client** edit the file **appsett
 ```
 * **connectionstring1**: it is the connection string to connect to the IoT Hub
 * **interfaceName**: it is the name of the NIC interface, running IoT client.
+
 Set the values of **connection1** and **interfaceName** with your values.
+The **appsettings.json** file is retrieved by ConfigurationBuilder() in **Microsoft.Extensions.Configuration.Json** namespace.
 
 Inside Visual Studio Code, open a session terminal and run the commands:
 ```console
@@ -202,7 +204,7 @@ dotnet run
 ```
 
 ### <a name="Manual registration IoT device"></a>3.b Build and run the IoT client with Microsoft Visual Studio 
-In Visual Studio open the file **iot-device.csproj**; a full solution is automatically created. 
+In Visual Studio open the file **iot-device.csproj** in the folder **iot-client**; a full solution is automatically created. 
 
 Edit the file **appsettings.json** and set your values of **connection1** and **interfaceName**.
 
@@ -214,8 +216,8 @@ install-Package Microsoft.Azure.Devices.Client
 ```
 then build the solution.
 
-### <a name="IoT client"></a>3.c Short overview of IoT client
-The appsettings.json is retrieved by ConfigurationBuilder(). 
+### <a name="IoT client"></a>3.c Overview of the IoT client
+The purpose of client is a collection of network system counters to send in a message to the IoT hub.  
 The counters byte sent, byte received in the NIC are available through:
 * **NetworkInterface.GetIPv4Statistics().BytesSent**
 * **NetworkInterface.GetIPv4Statistics().BytesReceived**

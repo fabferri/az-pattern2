@@ -221,13 +221,14 @@ The purpose of client is a collection of network system counters to send in a me
 The counters byte sent, byte received in the NIC are available through:
 * **NetworkInterface.GetIPv4Statistics().BytesSent**
 * **NetworkInterface.GetIPv4Statistics().BytesReceived**
+
 in **System.Net.NetworkInformation** namespace.
 
 The list of active TCP connections are available through **IPGlobalProperties.GetIPGlobalProperties.GetActiveTcpConnections()** in **System.Net.NetworkInformation** namespace. 
 
 The **GetActiveTcpConnections()** provides a set of pairs (LocalEndPoint, RemoteEndPoint). The list of pairs can be stored in Dictionary<string, string> or in List of tuples List<(string , string)>.
 
-All the telemetry data (byte sent, byte received, list of active TCP connections) are stored in a class:
+In the IoT client, all the telemetry data (byte sent, byte received, list of active TCP connections) are stored in a class:
 ```csharp
 public class telemetry { 
         public long bytesSent { get; set; }

@@ -436,8 +436,8 @@ The following screenshot shows the output as the back-end application in IoT Hub
 <!--Image References-->
 
 [1]: ./media/network-diagram.png "network diagram"
-[2]: ./media/event-Hub-partitions.png "event Hub partitions"
-[3]: ./media/iot-Hub-routing.png "routing message in IoT Hub"
+[2]: ./media/event-hub-partitions.png "event Hub partitions"
+[3]: ./media/iot-hub-routing.png "routing message in IoT Hub"
 [4]: ./media/er-ms-peering.png "network diagram ExpressRoute Microsoft peering"
 [5]: ./media/capture-ms-peering.png "capture traffic pass through ExpressRoute Microsoft peering"
 [6]: ./media/read-events-iot-hub.png "telemetry data from Azure IoT Hub"

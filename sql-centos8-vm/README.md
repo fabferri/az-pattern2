@@ -1,6 +1,6 @@
 <properties
-pageTitle= 'How to install SQL server on Azure CentOS 8 VM'
-description= "Installing SQL server on Azure CentOS 8 VM"
+pageTitle= 'How to install Microsoft SQL server on Azure CentOS 8 VM'
+description= "Installing Microsoft SQL server on Azure CentOS 8 VM"
 documentationcenter: na
 services=""
 documentationCenter="na"
@@ -19,7 +19,7 @@ editor=""/>
 
 
 
-## <a name="AzureDeployment"></a> Installing SQL server on CentOS 8 VM
+## <a name="AzureDeployment"></a> How to install Microsoft SQL server on CentOS 8 VM
 This post walks you through the steps to install server installed in CentOS 8.2 Azure VM.
 
 image reference:

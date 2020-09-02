@@ -365,12 +365,12 @@ Description of IOS-XE commands:
 
 10. To clear the content of the packet buffer:  
    **monitor capture CAP clear**
-   
+
 11. Once the necessary data has been collected, remove the capture: 
    **no monitor capture CAP**
 
 
-Below the capture in the CE1 router, by command **show monitor capture CAP buffer brief**
+Below the capture in the CE1 router, by command: **show monitor capture CAP buffer brief**
 ```console
 CE-01#show monitor capture CAP buffer brief
  ----------------------------------------------------------------------------
@@ -410,11 +410,12 @@ The capture shows:
 * traffic between the two public IP addresses X.198.12.64 (public advertised network from CE routes to Microsoft network) and  40.127.13.17 (public endpoint of Azure IoT hub).
 * destination TCP port on IoT hub is 8883
 * the transport layer uses TLS 1.2
-* application data protocl is mqtt 
+* application data protocol is mqtt 
 
 
 ## <a name="EnableIPForwarding"></a>5. Reading the telemetry data from your Azure IoT Hub
-The dotnet core project, to read the event in IoT Hub, is in the folder **iot-reader-telemetry**.
+The folder **iot-reader-telemetry** contains rhe dotnet core project to read the event in IoT Hub.
+
 Open the file .csproj in Visual Studio.
 
 To read the telmetry application data in IoT hub are required:

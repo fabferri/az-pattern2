@@ -240,7 +240,7 @@ Using the JsonSerializer the telemetry class is converted into JSON and send to 
 
 
 ## <a name="EnableIPForwarding"></a>4. Traffic capture through ExpressRoute Microsoft peering
-As best practice in production the CE1 and CE2 routers are configured to advertise via eBGP the same public network prefixes (NAT pool) to the primary and secondary link of the same ExpressRoute circuit, without AS path prepending. The traffic between on-premises and Azure pass through both of links, in load balancing. In our specific case, we want to capture the traffic between the IoT client and IoT hub and it is convenient to force the traffic to pass through only one CE router. To force the traffic to pass through CE1, we can apply AS PATH prepending on the CE2.
+As best practice in production the CE1 and CE2 routers are configured to advertise via eBGP the same public network prefixes (NAT pool) to the primary and secondary link of the same ExpressRoute circuit, without AS path prepending. The traffic between on-premises and Azure pass through both of ExpressRoute physical links, in load balancing. In our specific case, we want to capture the traffic between the IoT client and IoT hub and it is convenient to force the traffic to pass through only one CE router. To force the traffic to pass through CE1, we can apply AS PATH prepending on the CE2.
 
 [![4]][4]
 

@@ -422,6 +422,7 @@ To read the telmetry application data in IoT hub are required:
 * Event Hub name
 * Event Hubs-compatible path, 
 * Event Hub-compatible service primary key
+
 Those values are stored in **appsetting.json** file:
 ```json
 {
@@ -444,7 +445,7 @@ $primaryKey=(get-AzIotHubKey -ResourceGroupName $rgName -Name $iothub.Name -KeyN
 ```
 and set them in the **appsettings.json**.
 
-In the NuGet package manager add to the project the following packages:
+In the NuGet package manager, add to the project the following packages:
 ```console
 Install-Package Microsoft.Extensions.Configuration.Json
 Install-Package Azure.Messaging.EventHubs -Version 5.2.0-preview.3

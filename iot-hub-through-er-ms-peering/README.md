@@ -328,30 +328,44 @@ monitor capture CAP export tftp://10.0.0.1/CAP.pcap
 Description of IOS-XE commands:
 1. Define the location where the capture will occur:   
    **monitor capture CAP  interface GigabitEthernet0/0/1 both**
+
 2. Define the buffer for the capture (buffer size is in MB)
    **monitor capture CAP buffer circular size 3** 
+
 2. Associate a filter. The filter may be specified inline, or an ACL or class-map can be referenced: 
-   **onitor capture CAP access-list iot-capture**
-   display the list of commands used to configure the capture named CAP: 
+   **monitor capture CAP access-list iot-capture**
+   
+   Display the list of commands used to configure the capture named CAP: 
    **show monitor capture CAP parameter**
+
 3. Start the capture: 
    **monitor capture CAP start**
+
 4. The capture is now active. Allow it to collect the necessary data; to show captures in progress: 
    **show monitor capture**
+
 5. Stop the capture: 
    **monitor capture CAP stop**
+
 6. Examine the capture in a summary view: 
    **show monitor capture CAP buffer brief**
+
 7. Examine the capture in a detailed view: 
    **show monitor capture CAP buffer detailed**
+
 8. Examine the capture with dump packets in ASCII format:
    **show monitor capture CAP buffer dump**
+
 9. In addition, export the capture in PCAP format for further analysis (optional): 
    **monitor capture CAP export tftp://10.0.0.1/CAP.pcap**   
+  
    where 10.0.0.1 is the IP address of the tftp server.
+   
    [Note: Wireshark can open exported pcap files. The capture export supports also FTP copy]
+
 10. To clear the content of the packet buffer:  
    **monitor capture CAP clear**
+   
 11. Once the necessary data has been collected, remove the capture: 
    **no monitor capture CAP**
 

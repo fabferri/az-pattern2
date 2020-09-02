@@ -242,7 +242,9 @@ Using the JsonSerializer the telemetry class is converted into JSON and send to 
 ## <a name="EnableIPForwarding"></a>4. Traffic capture through ExpressRoute Microsoft peering
 As best practice in production the CE1 and CE2 routers are configured to advertise via eBGP the same public network prefixes (NAT pool) to the primary and secondary link of the same ExpressRoute circuit, without AS path prepending. The traffic between on-premises and Azure pass through both of ExpressRoute physical links, in load balancing. 
 
-In our case, we want to proof by traffic capture on the CE router, that traffic between the IoT client and IoT hub transit through the ExpressRoute Microsoft peering. It is convenient by BGP policy to force the traffic to transit through only one CE router. To force the traffic to pass through CE1, we can increase the AS PATH length on secondary link, by AS PATH prepending on the CE2.
+In our case, we want to proof by traffic capture on the CE router, that traffic between the IoT client and IoT hub transit through the ExpressRoute Microsoft peering. It is convenient by BGP policy to force the traffic to transit through only one CE router. 
+
+To force the traffic to pass through CE1, we can increase the AS PATH length on secondary link, by AS PATH prepending on the CE2.
 
 [![4]][4]
 
@@ -304,7 +306,7 @@ route-map PREPEND-1 permit 10
   set as-path prepend 65021 65021
 ```
 
-In the network configuration the firewall on-premises advertise to the CE1 and CE2 the public advertisement prefixes (NAT pool): X.198.12.64/32
+The firewall on-premises advertises in iBGP to the CE1 and CE2 the public advertisement prefix (NAT pool): X.198.12.64/32
 IOS-XE supports traffic capture by **monitor capture** command.
 
 The list of Cisco IOS-XE command to activate the capture on CE1 router is shown below:

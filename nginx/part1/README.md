@@ -81,7 +81,7 @@ sudo ufw reload
 Configuration options in NGINX are called directives. Directives are organized into groups known as blocks or contexts.
 
 
-## <a name="AzureDeployment"></a>3. Create Directory Structure
+## <a name="NGINX_Directory"></a>3. Create Directory Structure
 "Virtual Host" is an Apache term. NGINX does not have Virtual hosts, it has **server blocks** to host multiple websites on one server 
 **server blocks** use the server_name and listen directives to bind to TCP sockets.
 By default, NGINX has one server block enabled by default. It is configured to serve documents out of a directory at **/var/www/html**
@@ -106,7 +106,7 @@ sudo chown -R www-data:www-data /var/www/test10/html
 sudo chown -R www-data:www-data /var/www/test11/html
 ```
 
-## <a name="AzureDeployment"></a>4 Create a default page for Virtual Host
+## <a name="NGINX_defaultpage"></a>4. Create a default page for Virtual Host
 Let's create a default page for each of our sites so that we will have something to display.
 Create an index.html file in your first site:
 ```bash
@@ -138,7 +138,7 @@ inside this last index.html
     </body>
 </html>
 ```
-## <a name="AzureDeployment"></a>5. Set Up Environment for Server Block Files
+## <a name="NGINX_serverblockes"></a>5. Set Up Environment for Server Block Files
 After installation of the NGINX package from the Ubuntu repositories, you will have two directories:
 * **sites-available** directory to store the server blocks in. The sites-available folder is for storing all your vhost configurations, whether or not they're currently enabled. In other words, as the name says the content of this folder give you the list of all available sites. 
 * **sites-enabled** directory that will tell NGINX which links to publish, and which blocks share content with visitors. The sites-enabled folder contains symlinks to files in the sites-available folder. This allows you to <ins>selectively *disable* vhosts by removing the symlink</ins>. As the name says, the folder gives you the list of all enabled sites.
@@ -154,7 +154,7 @@ You should edit files only in **sites-available** directory.
 In the main NGINX configuration file, **/etc/nginx/nginx.conf**, you have the following lines:
 ```console
 ...
- ##
+    ##
     # Virtual Host Configs
     ##
     include /etc/nginx/conf.d/*.conf;
@@ -301,7 +301,7 @@ root@vm1:~# curl test11.com
 root@vm1:~#
 
 ```
-## <a name="AzureDeployment"></a>6. Change the ports for the server blockes
+## <a name="NGINX_changeport"></a>6. Change the ports for the server blockes
 In  /etc/nginx/sites-available/test10.conf
 ```console
 server {

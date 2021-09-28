@@ -44,7 +44,7 @@ NAT table in vpnGw2:
 | ------------------------ |:------------------------------------------------------------------------- |
 | **vpn1.json**            | ARM template to create vnet1, VPNG Gateway1 and vm1 <br> vnet2, VPN Gateway2 and vm2 |
 | **vpn1.ps1**             | powershell script to deploy the ARM template **vpn1.json**                |
-| **vpn2.json**            | Create the local Network Gateways and connections between VPN Gateway1 and VPN Gateway 2  |
+| **vpn2.json**            | Create the local Network Gateways, connections between VPN Gateway1 and VPN Gateway 2, NAT rules  |
 | **vpn2.ps1**             | powershell script to deploy the ARM template **vpn2.json**                |
 
 <br>

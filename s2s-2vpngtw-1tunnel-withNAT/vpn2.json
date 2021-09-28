@@ -183,7 +183,6 @@
                 "gatewayIpAddress": "[reference(variables('gateway1PublicIP1Id'),'2020-11-01').ipAddress]",
                 "bgpSettings": {
                     "asn": "[variables('asnGtw1')]",
-                    // "bgpPeeringAddress": "[first(split( reference(resourceId('Microsoft.Network/virtualNetworkGateways',variables('gateway1Name')),'2020-11-01').bgpSettings.bgpPeeringAddress , ','))]",
                     "bgpPeeringAddress": "100.0.1.254",
                     "peerWeight": 0
                 }
@@ -200,7 +199,6 @@
                 "gatewayIpAddress": "[reference(variables('gateway2PublicIP1Id'),'2020-11-01').ipAddress]",
                 "bgpSettings": {
                     "asn": "[variables('asnGtw2')]",
-                    // "bgpPeeringAddress": "[first(split( reference(resourceId('Microsoft.Network/virtualNetworkGateways',variables('gateway2Name')),'2020-11-01').bgpSettings.bgpPeeringAddress , ','))]",
                     "bgpPeeringAddress": "100.0.2.254",
                     "peerWeight": 0
                 }

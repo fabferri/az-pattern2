@@ -40,7 +40,7 @@ NAT table in vpnGw2:
 | branch | Static | EgressSnat | 10.0.2.0/24       | 100.0.2.0/24      | 1 Connection linked     |
 
 
-## <a name="list of ARM templates and scripts"></a>5. List of ARM templates and powershell scripts
+## <a name="list of ARM templates and scripts"></a> List of ARM templates and powershell scripts
 | file                     | description                                                               |       
 | ------------------------ |:------------------------------------------------------------------------- |
 | **vpn1.json**            | ARM template to create vnet1, VPNG Gateway1 and vm1 <br> vnet2, VPN Gateway2 and vm2 |

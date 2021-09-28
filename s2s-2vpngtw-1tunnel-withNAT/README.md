@@ -39,6 +39,7 @@ NAT table in vpnGw2:
 | ------ | ------ | ---------- | ----------------- | ----------------- | ----------------------- |
 | branch | Static | EgressSnat | 10.0.2.0/24       | 100.0.2.0/24      | 1 Connection linked     |
 
+<br>
 
 ## <a name="list of ARM templates and scripts"></a> List of ARM templates and powershell scripts
 | file                     | description                                                               |       

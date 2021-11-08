@@ -243,8 +243,12 @@ if (!$autoregistration)
 Write-Host (Get-Date)' - ' -NoNewline
 Write-Host "Step 8 completed successfully" -ForegroundColor Green
 Write-Host "  All environment components are built, time to play!" -ForegroundColor Green
-Write-Host
-Write-Host "  1. download and install the Azure storage explorer in the lab VM"
-Write-Host "  2. modify the file hosts in the on-premises Windows VM to traslate the storage URL into private endpoint "
-Write-Host "  3. Connect with storage explorer to the storage account" 
-Write-Host
+Write-Host ""
+Write-Host "  1. download and install the Azure storage explorer in the in spoke VM and in lab VM and "
+Write-Host "  2. in the on-premises Windows VM add to the file: "
+Write-Host "     C:\Windows\System32\drivers\etc\hosts          "
+Write-Host "     the entry:                                     "
+Write-Host "     private-IP-endpoint    storage account URL     " 
+Write-Host "     to traslate the storage URL into the private endpoint"
+Write-Host "  3. Connect by storage explorer to the storage account" 
+Write-Host ""

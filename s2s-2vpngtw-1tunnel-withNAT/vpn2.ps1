@@ -1,7 +1,7 @@
 #
 ################# Input parameters #################
-$subscriptionName  = "AzDev"     
-$location          = "eastus"
+$subscriptionName  = "AzDev1"     
+$location          = "westus2"
 $deploymentName    = "vpn1"
 $armTemplateFile   = "vpn2.json"
 ####################################################
@@ -22,6 +22,10 @@ if (!$ResourceGroupName) { Write-Host "variable $ResourceGroupName is null"; Exi
 $rgName=$ResourceGroupName
 write-host  "reading Resource group name from the file init.txt " -ForegroundColor yellow
 
+$parameters=@{
+              "location1" = $location;
+              "location2" = $location
+              }
 
 $subscr=Get-AzSubscription -SubscriptionName $subscriptionName
 Select-AzSubscription -SubscriptionId $subscr.Id
@@ -36,7 +40,7 @@ Catch {$rg = New-AzResourceGroup -Name $rgName  -Location $location  }
 $runTime=Measure-Command {
 
 write-host "running ARM template:"$templateFile
-New-AzResourceGroupDeployment  -Name $deploymentName -ResourceGroupName $rgName -TemplateFile $templateFile  -Verbose 
+New-AzResourceGroupDeployment  -Name $deploymentName -ResourceGroupName $rgName -TemplateFile $templateFile  -TemplateParameterObject $parameters -Verbose 
 }
 
 write-host -ForegroundColor Yellow "runtime: "$runTime.ToString()

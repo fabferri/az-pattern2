@@ -1,9 +1,9 @@
 ﻿#
 # Script to get the the Byte in/Byte out associated with the connections
 #
-$subscriptionName  = "AzDev"     
-$location          = "eastus"
-$rgName            = "vpn1"
+$subscriptionName = "AzDev"     
+$location = "eastus"
+$rgName = "vpn1"
 
 $pathFiles      = Split-Path -Parent $PSCommandPath
 $fileName="log"+[DateTime]::Now.ToString("yyyyMMdd-HHmmss") +".txt"

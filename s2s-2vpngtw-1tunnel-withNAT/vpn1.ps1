@@ -3,15 +3,15 @@
 [CmdletBinding()]
 param (
     [Parameter( Mandatory = $false, ValueFromPipeline=$false, HelpMessage='VMs administrator username')]
-    [string]$adminUsername = "ADMINISTRATOR_USERNAME",
+    [string]$adminUsername = "edge",
  
     [Parameter(Mandatory = $false, HelpMessage='VMs administrator password')]
-    [string]$adminPassword = "ADMINISTRATOR_PASSWORD"
+    [string]$adminPassword = "IJudpobU,y6("
     )
 
 ################# Input parameters #################
-$subscriptionName  = "AzDev"     
-$location          = "eastus"
+$subscriptionName  = "AzDev1"     
+$location          = "westus2"
 $deploymentName    = "vpn1"
 $armTemplateFile   = "vpn1.json"
 ####################################################
@@ -21,7 +21,9 @@ $templateFile   = "$pathFiles\$armTemplateFile"
 
 $parameters=@{
               "adminUsername"= $adminUsername;
-              "adminPassword"= $adminPassword
+              "adminPassword"= $adminPassword;
+              "location1" = $location;
+              "location2" = $location
               }
 
 #Reading the resource group name from the file init.txt

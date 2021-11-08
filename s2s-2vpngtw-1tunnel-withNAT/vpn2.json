@@ -4,14 +4,14 @@
     "parameters": {
         "location1": {
             "type": "string",
-            "defaultValue": "eastus",
+            "defaultValue": "westus2",
             "metadata": {
                 "description": "Azure region"
             }
         },
         "location2": {
             "type": "string",
-            "defaultValue": "eastus",
+            "defaultValue": "westus2",
             "metadata": {
                 "description": "Azure region"
             }
@@ -128,50 +128,50 @@
         "gtw2_egressNATRuleName": "[parameters('gtw2_egressNATRuleName')]"
     },
     "resources": [
-            {
-      "type": "Microsoft.Network/virtualNetworkGateways/natRules",
-      "name": "[concat(variables('gateway1Name'),'/',variables('gtw1_egressNATRuleName'))]",
-      "apiVersion": "2021-02-01",
-      "dependsOn": [
-      ],
-      "properties": {
-        "type": "Static",
-        "mode": "EgressSnat",
-        "internalMappings": [
-          {
-            "addressSpace": "10.0.0.0/24"
-          }
-        ],
-        "externalMappings": [
-          {
-            "addressSpace": "100.0.1.0/24"
-          }
-        ],
-        "ipConfigurationId": ""
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworkGateways/natRules",
-      "name": "[concat(variables('gateway2Name'),'/',variables('gtw2_egressNATRuleName'))]",
-      "apiVersion": "2021-02-01",
-      "dependsOn": [
-      ],
-      "properties": {
-        "type": "Static",
-        "mode": "EgressSnat",
-        "internalMappings": [
-          {
-            "addressSpace": "10.0.2.0/24"
-          }
-        ],
-        "externalMappings": [
-          {
-            "addressSpace": "100.0.2.0/24"
-          }
-        ],
-        "ipConfigurationId": ""
-      }
-    },
+        {
+            "type": "Microsoft.Network/virtualNetworkGateways/natRules",
+            "name": "[concat(variables('gateway1Name'),'/',variables('gtw1_egressNATRuleName'))]",
+            "apiVersion": "2021-02-01",
+            "dependsOn": [
+            ],
+            "properties": {
+                "type": "Static",
+                "mode": "EgressSnat",
+                "internalMappings": [
+                    {
+                        "addressSpace": "10.0.0.0/25"
+                    }
+                ],
+                "externalMappings": [
+                    {
+                        "addressSpace": "100.0.1.0/25"
+                    }
+                ],
+                "ipConfigurationId": ""
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworkGateways/natRules",
+            "name": "[concat(variables('gateway2Name'),'/',variables('gtw2_egressNATRuleName'))]",
+            "apiVersion": "2021-02-01",
+            "dependsOn": [
+            ],
+            "properties": {
+                "type": "Static",
+                "mode": "EgressSnat",
+                "internalMappings": [
+                    {
+                        "addressSpace": "10.0.2.0/25"
+                    }
+                ],
+                "externalMappings": [
+                    {
+                        "addressSpace": "100.0.2.0/25"
+                    }
+                ],
+                "ipConfigurationId": ""
+            }
+        },
         {
             "type": "Microsoft.Network/localNetworkGateways",
             "name": "[variables('localGatewayName11')]",
@@ -183,7 +183,7 @@
                 "gatewayIpAddress": "[reference(variables('gateway1PublicIP1Id'),'2020-11-01').ipAddress]",
                 "bgpSettings": {
                     "asn": "[variables('asnGtw1')]",
-                    "bgpPeeringAddress": "100.0.1.254",
+                    "bgpPeeringAddress": "[first(split( reference(resourceId('Microsoft.Network/virtualNetworkGateways',variables('gateway1Name')),'2020-11-01').bgpSettings.bgpPeeringAddress , ','))]",
                     "peerWeight": 0
                 }
             }
@@ -199,7 +199,7 @@
                 "gatewayIpAddress": "[reference(variables('gateway2PublicIP1Id'),'2020-11-01').ipAddress]",
                 "bgpSettings": {
                     "asn": "[variables('asnGtw2')]",
-                    "bgpPeeringAddress": "100.0.2.254",
+                    "bgpPeeringAddress": "[first(split( reference(resourceId('Microsoft.Network/virtualNetworkGateways',variables('gateway2Name')),'2020-11-01').bgpSettings.bgpPeeringAddress , ','))]",
                     "peerWeight": 0
                 }
             }

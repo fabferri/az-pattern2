@@ -2,16 +2,23 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "mngIP": {
+      "type": "string",
+      "defaultValue": "81.150.26.218/32",
+      "metadata": {
+        "description": "management IP address to connect in SSH to the VM"
+      }
+    },
     "location1": {
       "type": "string",
-      "defaultValue": "eastus",
+      "defaultValue": "westus2",
       "metadata": {
         "description": "Azure region"
       }
     },
     "location2": {
       "type": "string",
-      "defaultValue": "eastus",
+      "defaultValue": "westus2",
       "metadata": {
         "description": "Azure region"
       }
@@ -266,7 +273,7 @@
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "22",
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefix": "[parameters('mngIP')]",
               "destinationAddressPrefix": "VirtualNetwork",
               "access": "Allow",
               "priority": 500,
@@ -442,6 +449,7 @@
           "name": "[parameters('gatewaySku')]",
           "tier": "[parameters('gatewaySku')]"
         },
+        "enableBgpRouteTranslationForNat": true,
         "gatewayType": "Vpn",
         "vpnType": "RouteBased",
         "enableBgp": true,

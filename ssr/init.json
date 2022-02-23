@@ -1,0 +1,13 @@
+{
+    "subscriptionName": "Pathfinders",
+    "adminUsername" : "ADMINISTRATOR_USERNAME",
+    "adminRSAKey": "PUBCI_RSA_KEY",
+    "rgName": "test-newImage128T",
+    "locationConductor": "westus2",
+    "locationRouter1" : "westus2",
+    "locationRouter2": "westus2",
+    "RGTagExpireDate": "02/30/2022",
+    "RGTagContact": "user1@contoso.com",
+    "RGTagNinja": "user1",
+    "RGTagUsage": "test Juniper session smart routers"
+}

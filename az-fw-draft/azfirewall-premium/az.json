@@ -1,0 +1,634 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "vnet1",
+      "metadata": {
+        "description": "virtual network name"
+      }
+    },
+    "ipgroups_name1": {
+      "defaultValue": "ipgroup1",
+      "type": "string"
+    },
+    "ipgroups_name2": {
+      "defaultValue": "ipgroup2",
+      "type": "string"
+    },
+    "firewallPolicyName": {
+      "defaultValue": "firewallPolicy1",
+      "type": "string"
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for the Virtual Machine."
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_B1s",
+      "metadata": {
+        "description": "Size of VM"
+      }
+    },
+    "availabilityZones": {
+      "type": "array",
+      "defaultValue": [
+      ],
+      "metadata": {
+        "description": "Zone numbers e.g. 1,2,3."
+      }
+    },
+    "numberOfFirewallPublicIPAddresses": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 100,
+      "metadata": {
+        "description": "Number of public IP addresses for the Azure Firewall"
+      }
+    },
+    "authenticationType": {
+      "type": "string",
+      "defaultValue": "sshPublicKey",
+      "allowedValues": [
+        "sshPublicKey",
+        "password"
+      ],
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+      }
+    },
+    "adminPasswordOrKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+      }
+    }
+  },
+  "variables": {
+    "azureFirewallSubnetName": "AzureFirewallSubnet",
+    "serversSubnetName": "serversSubnet",
+    "jumpBoxSubnetName": "jumpboxSubnet",
+    "vnetAddressPrefix": "10.0.0.0/16",
+    "azureFirewallSubnetPrefix": "10.0.1.0/24",
+    "serversSubnetPrefix": "10.0.2.0/24",
+    "jumpboxSubnetPrefix": "10.0.3.0/24",
+    "serversSubnetRouteTableName": "serversSubnetRouteTable",
+    "jumpBoxSubnetRouteTableName": "jumpBoxSubnetRouteRouteTable",
+
+    "vNet1": {
+      "location": "[parameters('location')]",
+      "name": "[parameters('virtualNetworkName')]",
+      "addressSpacePrefix": "[variables('vnetAddressPrefix')]",
+      "subnet1Name": "[variables('azureFirewallSubnetName')]",
+      "subnet1Prefix": "[variables('azureFirewallSubnetPrefix')]",
+      "subnet2Name": "[variables('serversSubnetName')]",
+      "subnet2Prefix": "[variables('serversSubnetPrefix')]",
+      "subnet3Name": "[variables('jumpBoxSubnetName')]",
+      "subnet3Prefix": "[variables('jumpboxSubnetPrefix')]"
+    },
+
+    "azfwprivIP": "10.0.1.4",
+    "firewallName": "azfw1",
+    "firewallPublicIPNamePrefix": "azfw-pubIP",
+    "azureFirewallSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'), variables('azureFirewallSubnetName'))]",
+    "azureFirewallSubnetJSON": "[json(format('{{\"id\": \"{0}\"}}', variables('azureFirewallSubnetId')))]",
+    "copy": [
+      {
+        "name": "azureFirewallIpConfigurations",
+        "count": "[parameters('numberOfFirewallPublicIPAddresses')]",
+        "input": {
+          "name": "[concat('IpConf', copyIndex('azureFirewallIpConfigurations'))]",
+          "properties": {
+            "subnet": "[if(equals(copyIndex('azureFirewallIpConfigurations'), 0), variables('azureFirewallSubnetJSON'), json('null'))]",
+            "publicIPAddress": {
+              "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('firewallPublicIPNamePrefix'), add(copyIndex('azureFirewallIpConfigurations'), 1)))]"
+            }
+          }
+        }
+      }
+    ],
+    "networkRuleCollectionGroupName": "networkRuleCollection1",
+    "natRuleCollectionGroupName": "natRuleCollection1",
+    "linuxConfiguration": {
+      "disablePasswordAuthentication": true,
+      "ssh": {
+        "publicKeys": [
+          {
+            "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+            "keyData": "[parameters('adminPasswordOrKey')]"
+          }
+        ]
+      }
+    },
+
+    "vmsizeUbuntu": "[parameters('vmSize')]",
+    "vm1Name": "srv1",
+    "vm2Name": "srv2",
+    "vm3Name": "jumpbox",
+    "vm1nicId": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vm1Name'),'-nic'))]",
+    "vm2nicId": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vm2Name'),'-nic'))]",
+    "vm3nicId": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vm3Name'),'-nic'))]",
+    "vm1pipObject": "",
+    "vm2pipObject": "",
+    "vm3pipObject": {
+      "id": "[resourceId( 'Microsoft.Network/publicIPAddresses',concat( variables('vm3Name'),'-pubIP' )  )]"
+    },
+    "vm1nsgObject": "",
+    "vm2nsgObject": "",
+    "vm3nsgObject": {
+      "id": "[resourceId( 'Microsoft.Network/networkSecurityGroups',concat( variables('vm3Name'),'-nsg' )  )]"
+    },
+    "vmArray": [
+      {
+        "location": "[variables('vNet1').location]",
+        "vmName": "[variables('vm1Name')]",
+        "vmSize": "[variables('vmsizeUbuntu')]",
+        "publisher": "canonical",
+        "offer": "0001-com-ubuntu-server-focal",
+        "sku": "20_04-lts",
+        "vNetName": "[variables('vNet1').name]",
+        "subnetName": "[variables('vNet1').subnet2Name]",
+        "privIP": "10.0.2.10",
+        "pipObject": "[variables('vm1pipObject')]",
+        "nsgObject": "[variables('vm1nsgObject') ]",
+        "enableIPForwarding": false,
+        "acceleratedNetworking": false
+      },
+      {
+        "location": "[variables('vNet1').location]",
+        "vmName": "[variables('vm2Name')]",
+        "vmSize": "[variables('vmsizeUbuntu')]",
+        "publisher": "canonical",
+        "offer": "0001-com-ubuntu-server-focal",
+        "sku": "20_04-lts",
+        "vNetName": "[variables('vNet1').name]",
+        "subnetName": "[variables('vNet1').subnet2Name]",
+        "privIP": "10.0.2.20",
+        "pipObject": "[variables('vm2pipObject')]",
+        "nsgObject": "[variables('vm2nsgObject') ]",
+        "enableIPForwarding": false,
+        "acceleratedNetworking": false
+      },
+      {
+        "location": "[variables('vNet1').location]",
+        "vmName": "[variables('vm3Name')]",
+        "vmSize": "[variables('vmsizeUbuntu')]",
+        "publisher": "canonical",
+        "offer": "0001-com-ubuntu-server-focal",
+        "sku": "20_04-lts",
+        "vNetName": "[variables('vNet1').name]",
+        "subnetName": "[variables('vNet1').subnet3Name]",
+        "privIP": "10.0.3.10",
+        "pipObject": "[variables('vm3pipObject')]",
+        "nsgObject": "[variables('vm3nsgObject') ]",
+        "enableIPForwarding": false,
+        "acceleratedNetworking": false
+      }
+    ],
+    "vmCount": "[length(variables('vmArray'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/ipGroups",
+      "apiVersion": "2019-12-01",
+      "name": "[parameters('ipgroups_name1')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "ipAddresses": [
+          "10.0.2.4-10.0.2.127"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/ipGroups",
+      "apiVersion": "2020-11-01",
+      "name": "[parameters('ipgroups_name2')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "ipAddresses": [
+          "10.0.3.0/24"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "name": "[variables('serversSubnetRouteTableName')]",
+      "apiVersion": "2020-11-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "disableBgpRoutePropagation": false,
+        "routes": [
+          {
+            "name": "AzfwDefaultRoute",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[variables('azfwprivIP')]"
+            }
+          },
+          {
+            "name": "to-jumboxSubnet",
+            "properties": {
+              "addressPrefix": "[variables('jumpboxSubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[variables('azfwprivIP')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "name": "[variables('jumpboxSubnetRouteTableName')]",
+      "apiVersion": "2021-05-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "disableBgpRoutePropagation": false,
+        "routes": [
+          {
+            "name": "to-serversSubnet",
+            "properties": {
+              "addressPrefix": "[variables('serversSubnetPrefix')]",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[variables('azfwprivIP')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('virtualNetworkName')]",
+      "apiVersion": "2021-05-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', variables('serversSubnetRouteTableName'))]",
+        "[resourceId('Microsoft.Network/routeTables', variables('jumpboxSubnetRouteTableName'))]"
+      ],
+      "tags": {
+        "displayName": "[parameters('virtualNetworkName')]"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('vNet1').addressSpacePrefix]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('vNet1').subnet1Name]",
+            "properties": {
+              "addressPrefix": "[variables('vNet1').subnet1Prefix]"
+            }
+          },
+          {
+            "name": "[variables('vNet1').subnet2Name]",
+            "properties": {
+              "addressPrefix": "[variables('vNet1').subnet2Prefix]",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', variables('serversSubnetRouteTableName'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('vnet1').subnet3Name]",
+            "properties": {
+              "addressPrefix": "[variables('vnet1').subnet3Prefix]",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', variables('jumpboxSubnetRouteTableName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "comments": "public IPs Azure firewall",
+      "name": "[concat(variables('firewallPublicIPNamePrefix'), add(copyIndex(), 1))]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2021-05-01",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "copy": {
+        "name": "publicIpCopy",
+        "count": "[parameters('numberOfFirewallPublicIPAddresses')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4"
+      }
+    },
+    {
+      "comments": "Azure Firewall Policy",
+      "apiVersion": "2020-05-01",
+      "type": "Microsoft.Network/firewallPolicies",
+      "name": "[parameters('firewallPolicyName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "threatIntelMode": "Alert"
+      }
+    },
+    {
+      "comments": "Azure Firewall Policy NAT Rule Collection",
+      "name": "[concat(parameters('firewallPolicyName'),'/',variables('natRuleCollectionGroupName'))]",
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2020-07-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies',parameters('firewallPolicyName'))]",
+        "[variables('vm1nicId')]",
+        "[variables('vm2nicId')]",
+        "[variables('vm3nicId')]"
+      ],
+      "properties": {
+        "priority": "300",
+        "ruleCollections": [
+          {
+            "name": "vmNatRules",
+            "ruleCollectionType": "FirewallPolicyNatRuleCollection",
+            "priority": "300",
+            "action": {
+              "type": "Dnat"
+            },
+            "rules": [
+              {
+                "name": "[concat('svr1', '-ssh-nat-Rule')]",
+                "ruleType": "NatRule",
+                "sourceAddresses": [
+                  "*"
+                ],
+                "destinationAddresses": [
+                  "[reference(resourceId('Microsoft.Network/publicIPAddresses',  concat(variables('firewallPublicIPNamePrefix'), '1' )  ), '2020-11-01').ipAddress]"
+                ],
+                "destinationPorts": [
+                  "9001"
+                ],
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "translatedAddress": "[reference(variables('vm1nicId')).ipConfigurations[0].properties.privateIPAddress]",
+                "translatedPort": "22"
+              },
+              {
+                "name": "[concat('svr2', '-ssh-nat-Rule')]",
+                "ruleType": "NatRule",
+                "sourceAddresses": [
+                  "*"
+                ],
+                "destinationAddresses": [
+                  "[reference(resourceId('Microsoft.Network/publicIPAddresses',  concat(variables('firewallPublicIPNamePrefix'), '1' )  ), '2020-11-01').ipAddress]"
+                ],
+                "destinationPorts": [
+                  "9002"
+                ],
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "translatedAddress": "[reference(variables('vm2nicId')).ipConfigurations[0].properties.privateIPAddress]",
+                "translatedPort": "22"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "comments": "Azure Firewall Policy NAT Rule Collection",
+      "name": "[concat(parameters('firewallPolicyName'),'/',variables('networkRuleCollectionGroupName'))]",
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2021-05-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies',parameters('firewallPolicyName'))]",
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups',parameters('firewallPolicyName'),variables('natRuleCollectionGroupName'))]",
+        "[resourceId('Microsoft.Network/ipGroups', parameters('ipgroups_name1'))]",
+        "[resourceId('Microsoft.Network/ipGroups', parameters('ipgroups_name2'))]"
+      ],
+      "properties": {
+        "priority": "400",
+        "ruleCollections": [
+          {
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "name": "Rule1",
+            "action": {
+              "type": "Allow"
+            },
+            "priority": 500,
+            "rules": [
+              {
+                "ruleType": "NetworkRule",
+                "name": "network-rule1",
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "destinationPorts": [
+                  "6000-8000",
+                  "22"
+                ],
+                "sourceIpGroups": [
+                  "[resourceId('Microsoft.Network/ipGroups', parameters('ipgroups_name1'))]"
+                ],
+                "destinationIpGroups": [
+                  "[resourceId('Microsoft.Network/ipGroups', parameters('ipgroups_name2'))]"
+                ]
+              },
+              {
+                "ruleType": "NetworkRule",
+                "name": "network-rule2",
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "destinationPorts": [
+                  "6000-8000",
+                  "80",
+                  "22"
+                ],
+                "sourceIpGroups": [
+                  "[resourceId('Microsoft.Network/ipGroups', parameters('ipgroups_name2'))]"
+                ],
+                "destinationIpGroups": [
+                  "[resourceId('Microsoft.Network/ipGroups', parameters('ipgroups_name1'))]"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "type": "Microsoft.Network/azureFirewalls",
+      "name": "[variables('firewallName')]",
+      "location": "[parameters('location')]",
+      "zones": "[if(equals(length(parameters('availabilityZones')), 0), json('null'), parameters('availabilityZones'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicyName'))]",
+        "publicIpCopy",
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups',parameters('firewallPolicyName'),variables('natRuleCollectionGroupName'))]",
+        "[resourceId('Microsoft.Network/firewallPolicies/ruleCollectionGroups',parameters('firewallPolicyName'),variables('networkRuleCollectionGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": "[variables('azureFirewallIpConfigurations')]",
+        "firewallPolicy": {
+          "id": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicyName'))]"
+        },
+        "sku": {
+          "name": "AZFW_VNet",
+          "tier": "Premium"
+        }
+      }
+    },
+    {
+      "condition": "[greater(length(variables('vmArray')[copyIndex()].nsgObject), 0)]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[concat( variables('vmArray')[copyIndex()].vmName,'-nsg')]",
+      "apiVersion": "2021-05-01",
+      "location": "[variables('vNet1').location]",
+      "comments": "NSG applied to the subnets in VNet1",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "SSH-rule",
+            "properties": {
+              "description": "allow SSH",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 500,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "RDP-rule",
+            "properties": {
+              "description": "allow RDP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 600,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      },
+      "copy": {
+        "name": "nsgCopy",
+        "count": "[variables('vmCount')]"
+      }
+    },
+    {
+      "condition": "[greater(length(variables('vmArray')[copyIndex()].pipObject), 0)]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2021-05-01",
+      "name": "[concat( variables('vmArray')[copyIndex()].vmName,'-pubIP')]",
+      "location": "[variables('vmArray')[copyIndex()].location]",
+      "sku": {
+        "name": "Basic"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      },
+      "copy": {
+        "name": "publicIpCopy",
+        "count": "[variables('vmCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat( variables('vmArray')[copyIndex()].vmName,'-nic' )]",
+      "apiVersion": "2021-05-01",
+      "location": "[variables('vmArray')[copyIndex()].location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks',variables('vmArray')[copyIndex()].vNetName )]",
+        "publicIpCopy",
+        "nsgCopy"
+      ],
+      "properties": {
+        "primary": true,
+        "enableIPForwarding": "[variables('vmArray')[copyIndex()].enableIPForwarding]",
+        "enableAcceleratedNetworking": "[variables('vmArray')[copyIndex()].acceleratedNetworking]",
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[variables('vmArray')[copyIndex()].privIP]",
+              "publicIPAddress": "[if( greater(length(variables('vmArray')[copyIndex()].pipObject), 0), variables('vmArray')[copyIndex()].pipObject, json('null') )]",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vmArray')[copyIndex()].vNetName, variables('vmArray')[copyIndex()].subnetName)]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": "[if( greater(length(variables('vmArray')[copyIndex()].nsgObject), 0), variables('vmArray')[copyIndex()].nsgObject, json('null') )]"
+      },
+      "copy": {
+        "name": "nicCopy",
+        "count": "[variables('vmCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('vmArray')[copyIndex()].vmName]",
+      "apiVersion": "2021-11-01",
+      "location": "[variables('vmArray')[copyIndex()].location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmArray')[copyIndex()].vmName,'-nic')  )]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('vmArray')[copyIndex()].vmSize]"
+        },
+        "osProfile": {
+          "computerName": "[variables('vmArray')[copyIndex()].vmName]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPasswordOrKey')]",
+          "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('vmArray')[copyIndex()].publisher]",
+            "offer": "[variables('vmArray')[copyIndex()].offer]",
+            "sku": "[variables('vmArray')[copyIndex()].sku]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "name": "[concat(variables('vmArray')[copyIndex()].vmName,'-OsDisk')]"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat( variables('vmArray')[copyIndex()].vmName,'-nic' )  )]"
+            }
+          ]
+        }
+      },
+      "copy": {
+        "name": "nodeCopy",
+        "count": "[variables('vmCount')]"
+      }
+    }
+  ]
+}

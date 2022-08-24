@@ -73,10 +73,14 @@ for i in ${!WEB_ARRAY_NAME[@]}; do
    chown -R www-data:www-data $WEB_DIR/${WEB_ARRAY_NAME[$i]}/html
 done
 
+COLORS=("darkgreen" "darkblue" "red" "darkviolet" "orangered")
+LEN=${#COLORS[@]}
+
 for i in ${!WEB_ARRAY_NAME[@]}; do
 ### Create the content you want to display on the websites hosted on Nginx server 
 cat <<EOF > $WEB_DIR/${WEB_ARRAY_NAME[$i]}/html/index.html
 <html>
+    <style> h1 { color: ${COLORS[$((i%LEN))]}; } </style> <h1>
     <head> <title>Welcome to ${WEB_ARRAY_NAME[$i]}</title> </head>
     <body>
         <h1>${WEB_ARRAY_NAME[$i]} server block is working!</h1>

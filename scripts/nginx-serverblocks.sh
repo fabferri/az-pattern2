@@ -28,11 +28,13 @@ done
 #echo "${WEB_ARRAY_NAME[*]}"
 
 sleep 1m
-### before  any apt-get. This makes debconf use a frontend that expects no interactive input at all, preventing it from even trying to access stdin
-#export DEBIAN_FRONTEND=noninteractive
-# Skipping the Linux Agent Upate due to BUG - https://github.com/Azure/WALinuxAgent/issues/1459
-# echo "Block the Linux Azure Agent Update"
-# apt-mark hold walinuxagent
+
+if [ "${UID}" -ne 0 ];
+then
+    echo "Script executed without root permissions"
+    echo "You must be root to run this script." >&2
+    exit 3
+fi
 
 sudo apt-get -y update
 # sudo apt upgrade

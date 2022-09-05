@@ -2,7 +2,7 @@
 
 #
 # run the script with the follow command:
-# ./nva.sh -internalPort 10800 -internalVNI 800 -externalPort 10801 -externalVNI 801 -nvaLBIP 10.0.1.100
+# ./nva.sh -p 10800 -p 800 -P 10801 -V 801 -n 10.0.1.100
 ############################################################
 # Help                                                     #
 ############################################################

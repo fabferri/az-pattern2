@@ -4,7 +4,7 @@
 set -x
 
 # If the return code of one command is not 0 and the caller does not check it, the shell script will exit.
-set -e
+#set -e
 
 if [ "${UID}" -ne 0 ];
 then
@@ -50,7 +50,7 @@ logger -t devvm "Success"
 
 
 # Update Ubuntu and install all necessary binaries
-time sudo apt-get -y update
+#time sudo apt-get -y update
 
 # scripted install dotnet SDK
 # The script defaults to installing the latest SDK long term support (LTS) version

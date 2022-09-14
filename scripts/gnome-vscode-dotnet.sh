@@ -3,9 +3,6 @@
 # print commands and arguments as they are executed
 set -x
 
-# If the return code of one command is not 0 and the caller does not check it, the shell script will exit.
-#set -e
-
 if [ "${UID}" -ne 0 ];
 then
     echo "Script executed without root permissions"
@@ -17,12 +14,12 @@ fi
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Update Ubuntu and install all necessary binaries
-time sudo apt-get -y update
-sudo apt-get  -y upgrade
+sudo apt-get -y update
+sudo apt-get -y upgrade
 
 sleep 5
 time sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ubuntu-desktop-minimal 
-time sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp
+time sudo DEBIAN_FRONTEND=noninteractive apt-get -y install  xrdp
 
 sudo systemctl enable xrdp.service
 
@@ -51,14 +48,12 @@ logger --tag devvm "Installing VSCode: $?"
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y code
+sudo apt-get -y update
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y install code
 logger --tag devvm "VSCode Installed: $?"
 logger --tag devvm "Success"
 
 
-# Update Ubuntu and install all necessary binaries
-#time sudo apt-get -y update
 
 # scripted install dotnet SDK
 # The script defaults to installing the latest SDK long term support (LTS) version
@@ -74,14 +69,8 @@ rm -f /tmp/dotnet-install.sh
 cd /tmp
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 time sudo dpkg -i google-chrome-stable_current_amd64.deb
-# enable the "Universe" repository
-#sudo add-apt-repository universe
-#sudo apt-get install libgconf2-4 libnss3-1d libxss1
-
-# google-chrome-stable depends on fonts-liberation; "sudo apt-get install -f" will install missing dependencies 
 time sudo apt-get -y install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
 date
 sudo /sbin/reboot
-#exit 0

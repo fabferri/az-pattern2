@@ -18,7 +18,6 @@ echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Update Ubuntu and install all necessary binaries
 time sudo apt-get -y update
-
 sudo apt-get  -y upgrade
 
 sleep 5
@@ -84,5 +83,5 @@ time sudo apt-get -y install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
 date
-sudo reboot
-exit 0
+sudo /sbin/reboot
+#exit 0

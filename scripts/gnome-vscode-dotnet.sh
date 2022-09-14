@@ -34,7 +34,7 @@ sed -i "s/allowed_users=console/allowed_users=anybody/" /etc/X11/Xwrapper.config
 # by a user to check if the user is authorized to perform certain actions.
 # When you connect to Ubuntu remotely using RDP / Windows Remote Desktop, you will see the above errors because the Polkit Policy file 
 # cannot be accessed without superuser authentication.
-
+# Configure the policy xrdp session
 cat <<EOF > /etc/polkit-1/localauthority/50-local.d/45-allow-colord.pkla
 [Allow Colord all Users]
 Identity=unix-user:*
@@ -72,13 +72,14 @@ rm -f /tmp/dotnet-install.sh
 
 # Setup Chrome
 cd /tmp
-time wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 time sudo dpkg -i google-chrome-stable_current_amd64.deb
 # enable the "Universe" repository
-sudo add-apt-repository universe
-sudo apt-get install libgconf2-4 libnss3-1d libxss1
+#sudo add-apt-repository universe
+#sudo apt-get install libgconf2-4 libnss3-1d libxss1
+
 # google-chrome-stable depends on fonts-liberation; "sudo apt-get install -f" will install missing dependencies 
-#time sudo apt-get -y  install install -f
+time sudo apt-get -y  install install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
 date

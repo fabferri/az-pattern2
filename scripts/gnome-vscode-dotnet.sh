@@ -13,13 +13,19 @@ then
     exit 3
 fi
 
+# eliminate debconf warnings
+echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
 # Update Ubuntu and install all necessary binaries
 time sudo apt-get -y update
 
 sleep 5
-time sudo DEBIAN_FRONTEND=noninteractive apt-get -y --allow install ubuntu-desktop-minimal 
-time sudo apt-get install -y xrdp
+time sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ubuntu-desktop-minimal 
+time sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp
 
+sudo systemctl enable xrdp.service
+
+# changed the allowed_users
 sed -i "s/allowed_users=console/allowed_users=anybody/" /etc/X11/Xwrapper.config
 /etc/init.d/xrdp restart
 
@@ -39,14 +45,16 @@ ResultActive=yes
 EOF
 
 #install VSCode
-logger -t devvm "Installing VSCode: $?"
+# logger add log files to /var/log/syslog — from the command line and  scripts
+logger --tag devvm "Installing VSCode: $?"
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 sudo apt-get update
-sudo apt-get install -y code
-logger -t devvm "VSCode Installed: $?"
-logger -t devvm "Success"
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y code
+# logger --tag : mark every line with tag
+logger --tag devvm "VSCode Installed: $?"
+logger --tag devvm "Success"
 
 
 # Update Ubuntu and install all necessary binaries
@@ -66,7 +74,11 @@ rm -f /tmp/dotnet-install.sh
 cd /tmp
 time wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 time sudo dpkg -i google-chrome-stable_current_amd64.deb
-time sudo apt-get -y --allow install install -f
+# enable the "Universe" repository
+sudo add-apt-repository universe
+sudo apt-get install libgconf2-4 libnss3-1d libxss1
+# google-chrome-stable depends on fonts-liberation; "sudo apt-get install -f" will install missing dependencies 
+#time sudo apt-get -y  install install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
 date

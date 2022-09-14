@@ -73,4 +73,4 @@ time sudo apt-get -y install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
 date
-sudo /sbin/reboot
+# sudo /sbin/reboot

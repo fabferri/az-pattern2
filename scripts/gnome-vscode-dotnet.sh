@@ -19,6 +19,8 @@ echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 # Update Ubuntu and install all necessary binaries
 time sudo apt-get -y update
 
+sudo apt-get  -y upgrade
+
 sleep 5
 time sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ubuntu-desktop-minimal 
 time sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp
@@ -44,15 +46,14 @@ ResultInactive=no
 ResultActive=yes
 EOF
 
-#install VSCode
-# logger add log files to /var/log/syslog — from the command line and  scripts
+# install VSCode
+# logger add log files to /var/log/syslog — from the command line and  scripts. the command "logger --tag" : mark every line with tag
 logger --tag devvm "Installing VSCode: $?"
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y code
-# logger --tag : mark every line with tag
 logger --tag devvm "VSCode Installed: $?"
 logger --tag devvm "Success"
 
@@ -79,9 +80,9 @@ time sudo dpkg -i google-chrome-stable_current_amd64.deb
 #sudo apt-get install libgconf2-4 libnss3-1d libxss1
 
 # google-chrome-stable depends on fonts-liberation; "sudo apt-get install -f" will install missing dependencies 
-time sudo apt-get -y  install install -f
+time sudo apt-get -y install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
 date
-reboot
+sudo reboot
 exit 0

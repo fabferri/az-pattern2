@@ -73,4 +73,8 @@ time sudo apt-get -y install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
 date
+# reboot the VM in 1 minutes
+#nohup shutdown -r +1 &
+/sbin/shudown -r +1 
 # sudo /sbin/reboot
+exit 0

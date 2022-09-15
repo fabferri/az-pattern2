@@ -72,9 +72,20 @@ time sudo dpkg -i google-chrome-stable_current_amd64.deb
 time sudo apt-get -y install -f
 time rm /tmp/google-chrome-stable_current_amd64.deb
 
+# Setup Edge
+# Download GPG Key to ensure packages authenticity
+wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+# Adding Official Microsoft Repository. The command will add the official Microsoft repository into the list.
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main"
+sudo apt-get update
+# Install Microsoft Edge Browser
+sudo apt-get install microsoft-edge-stable
+#To check the Microsoft Edge Browser Stable version use the command: microsoft-edge --version
+
 date
-# reboot the VM in 1 minutes
-#nohup shutdown -r +1 &
-#sudo /sbin/shudown -r +1 
-sudo systemctl reboot
-#exit 0
+# different way to reboot the VM 
+###### nohup shutdown -r +1 &
+###### sudo /sbin/shutdown -r +1 
+# sudo systemctl reboot
+sleep 5
+exit 0

@@ -10,15 +10,17 @@ then
     exit 3
 fi
 
+setup_MicrosoftRepository() {
+   # Download GPG Key to ensure packages authenticity
+   curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+   sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+   sudo rm microsoft.gpg
+}
 
 # install VSCode
 setup_VSCode() {
    # logger add log files to /var/log/syslog — from the command line and  scripts. the command "logger --tag" : mark every line with tag
    logger --tag devvm "Installing VSCode: $?"
-   # Adding Official Microsoft Repository. The command will add the official Microsoft repository into the list.
-   curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-   sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-   # Adding Official Microsoft Repository. The command will add the official Microsoft repository into the list.
    sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
    sudo apt-get -y update
    sudo DEBIAN_FRONTEND=noninteractive apt-get -y install code
@@ -41,12 +43,7 @@ setup_dotnet() {
 
 setup_edge() {
    # Setup Edge
-   # Download GPG Key to ensure packages authenticity
-   curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-   sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-   # Adding Official Microsoft Repository. The command will add the official Microsoft repository into the list.
    sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
-   sudo rm microsoft.gpg
    sudo apt-get -y update
    # Install Microsoft Edge Browser
    sudo apt-get -y install microsoft-edge-stable
@@ -94,6 +91,8 @@ ResultInactive=no
 ResultActive=yes
 EOF
 
+# Setup Microsoft repository
+setup_MicrosoftRepository
 
 # Setup Visual Studio Code
 setup_VSCode

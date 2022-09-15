@@ -107,12 +107,12 @@ setup_edge
 # Setup Chrome
 setup_chrome
 
-
 date
 
 # different way to reboot the VM 
 ###### nohup shutdown -r +1 &
 ###### sudo /sbin/shutdown -r +1 
-# sudo systemctl reboot
-sleep 5
-exit 0
+sudo systemctl reboot
+
+
+

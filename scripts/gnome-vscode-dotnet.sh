@@ -43,7 +43,7 @@ setup_dotnet() {
 
 setup_edge() {
    # Setup Edge
-   sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+   sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list'
    sudo apt-get -y update
    # Install Microsoft Edge Browser
    sudo apt-get -y install microsoft-edge-stable
@@ -58,7 +58,7 @@ setup_chrome() {
    rm /tmp/google-chrome-stable_current_amd64.deb
 }
 
-
+sleep 10
 # eliminate debconf warnings
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
@@ -66,9 +66,9 @@ echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-sleep 5
+
 time sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ubuntu-desktop-minimal 
-time sudo DEBIAN_FRONTEND=noninteractive apt-get -y install  xrdp
+time sudo DEBIAN_FRONTEND=noninteractive apt-get -y install xrdp
 
 sudo systemctl enable xrdp.service
 

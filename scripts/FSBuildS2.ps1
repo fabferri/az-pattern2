@@ -110,11 +110,6 @@ if ($userList.Count -gt 0) {
   }
 }
 
-
-
-
-
-
 # End Nicely
 Write-Host "File Server Set up Successfull!"
 Stop-Transcript

@@ -6,8 +6,6 @@ Param(
 [string]$Pass1,
 [string]$User2,
 [string]$Pass2,
-[string]$User3,
-[string]$Pass3,
 [string]$PEPName)
 
 Write-Host "PEPName: $PEPName"
@@ -21,8 +19,8 @@ Catch {New-NetFirewallRule -DisplayName "Allow ICMPv4" -Name Allow_ICMPv4_in -Ac
 
 # Add additional Local Admins
 $userList = @{
+  $User1 = $Pass1
   $User2 = $Pass2
-  $User3 = $Pass3
 }
 foreach ($User in $userList.Keys) {
   Write-Host "Adding $User"

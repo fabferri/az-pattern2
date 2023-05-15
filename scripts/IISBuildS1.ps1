@@ -37,17 +37,18 @@ foreach ($User in $userList.Keys) {
 
 # Install IIS
 Write-Host "Installing IIS and .Net 4.5, this can take some time, around 5+ minutes..." -ForegroundColor Cyan
-Add-WindowsFeature Web-Server, Web-Asp-Net45
+Add-WindowsFeature Web-Server, Web-Mgmt-Console, Web-Asp-Net45
 
 # Create Web App PagesWeb
 Write-Host "Creating Web page and Web.Config file" -ForegroundColor Cyan
 $ServerName = "$env:COMPUTERNAME"
+$lbFrontEndIP = "10.2.2.50"
 $MainPage = '<%@ Page Language="vb" AutoEventWireup="false" %>
 <%@ Import Namespace="System.IO" %>
 <script language="vb" runat="server">
   Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
   '' Test Endpoints (VMSS and Private EP)
-    Dim ipVMSS as String = "10.2.1.254"
+    Dim ipVMSS as String = "' + $lbFrontEndIP + '"
     Dim urlPvEP as String = "' + $PEPName + '.privatelink.web.core.windows.net"
     Dim IsVMSSReady as Boolean = False
     Dim IsEndPointReady as Boolean = False

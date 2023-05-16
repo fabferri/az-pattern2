@@ -64,7 +64,8 @@ if ($userList.Count -gt 0) {
 
 # 3. Install IIS
 Write-Host "Installing IIS and .Net 4.5, this can take some time, around 5+ minutes..." -ForegroundColor Cyan
-Add-WindowsFeature Web-Server, Web-Asp-Net45
+Add-WindowsFeature Web-Server, Web-Mgmt-Console, Web-Asp-Net45
+
 
 # Configure IIS
 $WebConfig ='<?xml version="1.0" encoding="utf-8"?>

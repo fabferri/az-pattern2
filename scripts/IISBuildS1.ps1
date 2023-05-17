@@ -146,7 +146,7 @@ $WebConfig ='<?xml version="1.0" encoding="utf-8"?>
   <system.web>
     <compilation debug="true" strict="false" explicit="true" targetFramework="4.8" />
     <httpRuntime targetFramework="4.8" />
-    <identity impersonate="true" />
+    <identity impersonate="true" userName="'+ $User2 +'" password="'+ $Pass2+ '"/>
     <customErrors mode="Off"/>
   </system.web>
   <system.webServer>

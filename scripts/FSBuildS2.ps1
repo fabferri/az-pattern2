@@ -29,7 +29,7 @@ Catch {New-NetFirewallRule -DisplayName "Allow ICMPv4" -Name Allow_ICMPv4_in -Ac
 # 2. Add additional local Admin accounts
 # Add additional local Admin accounts
 $userList = @{}
-# if $User1 and $Pass12 are not null, then add to the hash $userList
+# if $User1 and $Pass1 are not null, then add to the hash $userList
 if (-not ([string]::IsNullOrEmpty($User1) -or [string]::IsNullOrEmpty($Pass1) )) {
   $userList.Add($User1, $Pass1)    
 }

@@ -51,6 +51,7 @@ $MainPage = '<%@ Page Language="vb" AutoEventWireup="false" %>
     Dim urlPvEP as String = "' + $PEPName + '.privatelink.web.core.windows.net"
     Dim IsEndPointReady as Boolean = False
     Dim testSocket as New System.Net.Sockets.TcpClient()
+    Dim i as Integer
     
     '' Test Private Endpoint
     testSocket = New System.Net.Sockets.TcpClient()

@@ -3,14 +3,10 @@
 # Configures VM, then downloads and send router config to router
 #
 # 1. Open Firewall for ICMP
-# 2. Add additional local Admin accounts
-# 3. Test/Create Folders
-# 4. Install the PowerShell SDK
-# 5. Create and push P2S Root cert and pfx
-# 6. Pull Config File
-# 7. Pull Cert and write to mulitple locations
-# 8. Push Router Config
-# 9. Create and set login job to copy rsa key to .ssh 
+# 2. Test/Create Folders
+# 3. Create and push P2S Root cert and pfx
+# 4. Pull Config File
+# 5. Pull Cert and write to mulitple locations
 #
 
 
@@ -97,7 +93,7 @@ Write-Host "Uploading root cer file data to Key Vault"
 $kvName = (Get-AzKeyVault | Select-Object -First 1).VaultName
 Write-Host "kvName: $kvName"
 if ($null -eq (Get-AzKeyVaultSecret -VaultName $kvName -Name "P2SRoot")) {
-     $cerKey = Get-Content "C:\Workshop\P2SRoot.cer"
+     $cerKey = Get-Content "C:\P2SRoot.cer"
      $certSec = ConvertTo-SecureString $($cerKey[1..($cerKey.IndexOf("-----END CERTIFICATE-----") - 1)] -join('')) -AsPlainText -Force
      Set-AzKeyVaultSecret -VaultName $kvName -Name "P2SRoot" -SecretValue $certSec | Out-Null
      Write-Host "  Root cer file data saved to Key Vault"
@@ -131,7 +127,7 @@ If (-not (Test-Path -Path $FilePfx)) {
 #$saFiles = Get-AzStorageBlob -Container '$web' -Context $sa.context
 #if ($null -ne ($saFiles | Where-Object -Property Name -eq "Client.pfx")) {
 #    Write-Host "  Client cert exists in Storage Account, skipping"}
-#else {Set-AzStorageBlobContent -Context $sa.context -Container '$web' -File "C:\Workshop\Client.pfx" -Properties @{"ContentType" = "application/x-pkcs12"} -ErrorAction Stop | Out-Null
+#else {Set-AzStorageBlobContent -Context $sa.context -Container '$web' -File "C:\Client.pfx" -Properties @{"ContentType" = "application/x-pkcs12"} -ErrorAction Stop | Out-Null
 #      Write-Host "  Client.pfx saved to Storage Account"}
 
 

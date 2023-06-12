@@ -153,7 +153,7 @@ Else { Write-Host "  Client pfx file exists, skipping" }
 # Upload Client to Storage Account 
 Write-Host 'Uploading Client.pfx to storage account $web container'
 $sa = (Get-AzStorageAccount | Select-Object -First 1)
-$saFiles = Get-AzStorageBlob -Container 'certificate' -Context $sa.context
+$saFiles = Get-AzStorageBlob -Container 'certificates' -Context $sa.context
 if ($null -ne ($saFiles | Where-Object -Property Name -eq "Client.pfx")) {
      Write-Host "  Client cert exists in Storage Account, skipping"
 }

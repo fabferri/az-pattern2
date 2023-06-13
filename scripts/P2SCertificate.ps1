@@ -128,8 +128,8 @@ If ($null -eq $kvs) {
      $kvs = Set-AzKeyVaultSecret -VaultName $kvName -Name "P2SCertPwd" -SecretValue $secPwdP2SCert -ErrorAction Stop
 }
 Else {
-     # retrieve the value of password associated with the client certificate from keyvault
-     # associated the decrited certificate to the variable $pwdP2SCert
+     # fetch the value of password associated with the client certificate from keyvault
+     # and assign the value of decrypted password to the variable $pwdP2SCert
      $ssPtr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($kvs.SecretValue)
      try { $pwdP2SCert = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($ssPtr) }
      finally { [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ssPtr) }
@@ -140,10 +140,11 @@ Else {
 Write-Host "Exporting client cert to pfx file"
 $FilePfx = "C:\Client.pfx"
 If (-not (Test-Path -Path $FilePfx)) {
-     $pwdSec = ConvertTo-SecureString $secPwdP2SCert -AsPlainText -Force
-     Export-PfxCertificate -Cert $certClient -FilePath $FilePfx  -Password $pwdSec | Out-Null
+     $secPwdP2SCert = ConvertTo-SecureString $pwdP2SCert -AsPlainText -Force
+     #the password used to protect the exported PFX file must be in the form of secure string
+     Export-PfxCertificate -Cert $certClient -FilePath $FilePfx  -Password $secPwdP2SCert | Out-Null
      # write password in a file
-     Set-Content -Path "C:\ClientSecret.txt" -Value $secPwdP2SCert -Force
+     Set-Content -Path "C:\ClientSecret.txt" -Value $pwdP2SCert -Force
      Write-Host "  Client cert pfx file created"
 }
 Else { Write-Host "  Client pfx file exists, skipping" }
@@ -158,7 +159,7 @@ if ($null -ne ($saFiles | Where-Object -Property Name -eq "Client.pfx")) {
      Write-Host "  Client cert exists in Storage Account, skipping"
 }
 else {
-     Set-AzStorageBlobContent -Context $sa.context -Container '$web' -File "C:\Workshop\Client.pfx" -Properties @{"ContentType" = "application/x-pkcs12" } -ErrorAction Stop | Out-Null
+     Set-AzStorageBlobContent -Context $sa.context -Container 'certificates' -File "C:\Client.pfx" -Properties @{"ContentType" = "application/x-pkcs12" } -ErrorAction Stop | Out-Null
      Write-Host "  Client.pfx saved to Storage Account"
 }
 

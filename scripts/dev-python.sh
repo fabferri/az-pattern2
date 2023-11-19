@@ -116,9 +116,7 @@ date
 
 sudo apt-get -y install python3
 
-
 sudo apt-get -y install python3-pip
-
 
 # install Visual Studio Code Extensions for Python:
 su $admUser -c 'code --install-extension  ms-python.python'
@@ -130,7 +128,6 @@ logger -t devvm "Visual Studio Code Jupyter notebook extension installed: $?"
 
 # List of installed Visual Studio Code Extensions
 su $admUser -c 'code --list-extensions'
-
 
 # different way to reboot the VM 
 ###### nohup shutdown -r +1 &

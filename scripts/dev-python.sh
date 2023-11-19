@@ -118,6 +118,9 @@ sudo apt-get -y install python3
 
 sudo apt-get -y install python3-pip
 
+# The virtual environment is deployed using the installed venv (virtual environment) package:
+sudo apt-get -y install python3-venv
+
 # install Visual Studio Code Extensions for Python:
 su $admUser -c 'code --install-extension  ms-python.python'
 logger -t devvm "Visual Studio Code python extension installed: $?"

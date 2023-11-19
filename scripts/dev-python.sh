@@ -1,6 +1,6 @@
 #!/bin/bash
 
-admUser=$1
+admUser="$1"
 
 # print commands and arguments as they are executed
 set -x

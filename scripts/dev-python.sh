@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#admUser="$1"
-
 # print commands and arguments as they are executed
 set -x
 
@@ -11,8 +9,6 @@ then
     echo "You must be root to run this script." >&2
     exit 3
 fi
-
-
 
 setup_MicrosoftRepository() {
    # Download GPG Key to ensure packages authenticity
@@ -104,23 +100,16 @@ setup_MicrosoftRepository
 # Setup Visual Studio Code
 setup_VSCode
 
-# function to setup dotnet - uncomment the line below:
-# setup_dotnet
+# Setup dotnet
+setup_dotnet
 
-# function to setup Microsoft edge - uncomment the line below:
-# setup_edge
+# Setup Microsoft edge
+setup_edge
 
 # Setup Chrome
 setup_chrome
 
 date
-
-sudo apt-get -y install python3
-logger -t devvm "phython3 installed: $?"
-
-sudo apt-get -y install python3-pip
-logger -t devvm "pip installed: $?"
-
 
 # different way to reboot the VM 
 ###### nohup shutdown -r +1 &
@@ -128,15 +117,4 @@ logger -t devvm "pip installed: $?"
 sudo systemctl reboot
 
 
-
-
-# install Visual Studio Code Extensions for Python:
-su $admUser -c 'code --install-extension  ms-python.python'
-logger -t devvm "Visual studio code python extension installed: $?"
-
-# install Visual Studio Code Extension for Jupyter notebook
-su $admUser -c 'code --install-extension  ms-toolsai.jupyter'
-
-# List of installed Visual Studio Code Extensions
-su $admUser -c 'code --list-extensions'
 

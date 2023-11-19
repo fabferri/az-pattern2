@@ -137,4 +137,3 @@ su $admUser -c 'code --list-extensions'
 ###### sudo /sbin/shutdown -r +1 
 sudo systemctl reboot
 
-

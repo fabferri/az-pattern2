@@ -1,5 +1,7 @@
 #!/bin/bash
 
+admUser=$1
+
 # print commands and arguments as they are executed
 set -x
 
@@ -10,7 +12,7 @@ then
     exit 3
 fi
 
-admUser=$1
+
 
 setup_MicrosoftRepository() {
    # Download GPG Key to ensure packages authenticity

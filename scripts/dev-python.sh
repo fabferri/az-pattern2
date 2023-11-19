@@ -116,10 +116,14 @@ setup_chrome
 date
 
 sudo apt-get -y install python3
+logger -t devvm "phython3 installed: $?"
+
 sudo apt-get -y install python3-pip
+logger -t devvm "pip installed: $?"
 
 # install Visual Studio Code Extensions for Python:
 su $admUser -c 'code --install-extension  ms-python.python'
+logger -t devvm "Visual studio code python extension installed: $?"
 
 # install Visual Studio Code Extension for Jupyter notebook
 su $admUser -c 'code --install-extension  ms-toolsai.jupyter'
